@@ -1,20 +1,23 @@
-import numpy as np
-from pogema import GridConfig
-
 from heapq import heappop, heappush
+
+import numpy as np
+
+from pogema import GridConfig
 
 INF = 1e7
 
 
 class GridMemory:
     def __init__(self, start_r=64):
-        self._memory = np.zeros(shape=(start_r * 2 + 1, start_r * 2 + 1), dtype=np.bool_)
+        self._memory = np.zeros(
+            shape=(start_r * 2 + 1, start_r * 2 + 1), dtype=np.bool_
+        )
 
     @staticmethod
     def _try_to_insert(x, y, source, target):
         r = source.shape[0] // 2
         try:
-            target[x - r:x + r + 1, y - r:y + r + 1] = source
+            target[x - r : x + r + 1, y - r : y + r + 1] = source
             return True
         except ValueError:
             return False
@@ -91,7 +94,9 @@ def a_star(start, target, grid: GridMemory, max_steps=10000):
 class AStarAgent:
     def __init__(self, seed=0):
         self._moves = GridConfig().MOVES
-        self._reverse_actions = {tuple(self._moves[i]): i for i in range(len(self._moves))}
+        self._reverse_actions = {
+            tuple(self._moves[i]): i for i in range(len(self._moves))
+        }
 
         self._gm = None
         self._saved_xy = None
@@ -99,15 +104,29 @@ class AStarAgent:
         self._rnd = np.random.default_rng(seed)
 
     def act(self, obs):
-        xy, target_xy, obstacles, agents = obs['xy'], obs['target_xy'], obs['obstacles'], obs['agents']
-
+        xy, target_xy, obstacles, agents = (
+            obs["xy"],
+            obs["target_xy"],
+            obs["obstacles"],
+            obs["agents"],
+        )
 
         if self._saved_xy is not None and h(self._saved_xy, xy) > 1:
-            raise IndexError("Agent moved more than 1 step. Please, call clear_state method before new episode.")
-        if self._saved_xy is not None and h(self._saved_xy, xy) == 0 and xy != target_xy:
+            raise IndexError(
+                "Agent moved more than 1 step. Please, call clear_state method before new episode."
+            )
+        if (
+            self._saved_xy is not None
+            and h(self._saved_xy, xy) == 0
+            and xy != target_xy
+        ):
             return self._rnd.integers(len(self._moves))
         self._gm.update(*xy, obstacles)
-        path = a_star(xy, target_xy, self._gm, )
+        path = a_star(
+            xy,
+            target_xy,
+            self._gm,
+        )
         if len(path) <= 1:
             action = 0
         else:

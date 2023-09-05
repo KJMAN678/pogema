@@ -112,13 +112,23 @@ def generate_positions_and_targets_fast(obstacles, grid_config):
 
     components = bfs(grid, tuple(c.MOVES), c.size, start_id, free_cell=c.FREE)
     height, width = obstacles.shape
-    order = [(x, y) for x in range(height) for y in range(width) if grid[x, y] >= start_id]
+    order = [
+        (x, y) for x in range(height) for y in range(width) if grid[x, y] >= start_id
+    ]
     np.random.default_rng(c.seed).shuffle(order)
 
-    return placing(order=order, components=components, grid=grid, start_id=start_id, num_agents=c.num_agents)
+    return placing(
+        order=order,
+        components=components,
+        grid=grid,
+        start_id=start_id,
+        num_agents=c.num_agents,
+    )
 
 
-def generate_new_target(rnd_generator, point_to_component, component_to_points, position):
+def generate_new_target(
+    rnd_generator, point_to_component, component_to_points, position
+):
     component_id = point_to_component[position]
     component = component_to_points[component_id]
     new_target = tuple(*rnd_generator.choice(component, 1))
@@ -148,7 +158,10 @@ def time_it(func, num_iterations):
     for index in range(num_iterations):
         grid_config = GridConfig(num_agents=64, size=64, seed=index)
         obstacles = generate_obstacles(grid_config)
-        result = func(obstacles, grid_config, )
+        result = func(
+            obstacles,
+            grid_config,
+        )
         if index == 0 and num_iterations > 1:
             print(result)
     finish = time.monotonic()
@@ -159,8 +172,11 @@ def time_it(func, num_iterations):
 def main():
     num_iterations = 1000
     time_it(generate_positions_and_targets_fast, num_iterations=1)
-    print('fast:', time_it(generate_positions_and_targets_fast, num_iterations=num_iterations))
+    print(
+        "fast:",
+        time_it(generate_positions_and_targets_fast, num_iterations=num_iterations),
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

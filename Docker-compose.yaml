@@ -1,0 +1,10 @@
+version: '3'
+services:
+  poetrytest:
+    restart: always
+    build: .
+    container_name: 'pogema'
+    working_dir: '/root/pogema'
+    tty: true
+    volumes:
+      - ./pogema:/root/pogema

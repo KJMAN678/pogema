@@ -5,7 +5,6 @@ from pogema.envs import _make_pogema
 
 
 class PyMarlPogema:
-
     def __init__(self, grid_config, mh_distance=False):
         gc = grid_config
         self._grid_config: GridConfig = gc
@@ -24,17 +23,21 @@ class PyMarlPogema:
         return self
 
     def step(self, actions):
-        self._observations, rewards, terminated, truncated, infos = self.env.step(actions)
+        self._observations, rewards, terminated, truncated, infos = self.env.step(
+            actions
+        )
         info = {}
         done = all(terminated) or all(truncated)
         if done:
-            info.update(CSR=infos[0]['metrics']['CSR'])
-            info.update(ISR=infos[0]['metrics']['ISR'])
+            info.update(CSR=infos[0]["metrics"]["CSR"])
+            info.update(ISR=infos[0]["metrics"]["ISR"])
 
         return sum(rewards), done, info
 
     def get_obs(self):
-        return np.array([self.get_obs_agent(agent_id) for agent_id in range(self.n_agents)])
+        return np.array(
+            [self.get_obs_agent(agent_id) for agent_id in range(self.n_agents)]
+        )
 
     def get_obs_agent(self, agent_id):
         return np.array(self._observations[agent_id]).flatten()
@@ -75,12 +78,13 @@ class PyMarlPogema:
         return self.env.render(*args, **kwargs)
 
     def get_env_info(self):
-        env_info = {"state_shape": self.get_state_size(),
-                    "obs_shape": self.get_obs_size(),
-                    "n_actions": self.get_total_actions(),
-                    "n_agents": self.n_agents,
-                    "episode_limit": self.episode_limit,
-                    }
+        env_info = {
+            "state_shape": self.get_state_size(),
+            "obs_shape": self.get_obs_size(),
+            "n_actions": self.get_total_actions(),
+            "n_agents": self.n_agents,
+            "episode_limit": self.episode_limit,
+        }
         return env_info
 
     @staticmethod

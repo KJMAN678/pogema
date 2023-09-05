@@ -1,15 +1,18 @@
 from typing import Optional
 
-import numpy as np
 import gymnasium
+import numpy as np
 from gymnasium.error import ResetNeeded
 
-from pogema.grid import Grid, GridLifeLong, CooperativeGrid
-from pogema.grid_config import GridConfig
-from pogema.wrappers.metrics import LifeLongAverageThroughputMetric, NonDisappearEpLengthMetric, \
-    NonDisappearCSRMetric, NonDisappearISRMetric, EpLengthMetric, ISRMetric, CSRMetric
-from pogema.wrappers.multi_time_limit import MultiTimeLimit
 from pogema.generator import generate_new_target
+from pogema.grid import CooperativeGrid, Grid, GridLifeLong
+from pogema.grid_config import GridConfig
+from pogema.wrappers.metrics import (CSRMetric, EpLengthMetric, ISRMetric,
+                                     LifeLongAverageThroughputMetric,
+                                     NonDisappearCSRMetric,
+                                     NonDisappearEpLengthMetric,
+                                     NonDisappearISRMetric)
+from pogema.wrappers.multi_time_limit import MultiTimeLimit
 from pogema.wrappers.persistence import PersistentWrapper
 
 
@@ -345,6 +348,13 @@ def _make_pogema(grid_config):
             env = NonDisappearCSRMetric(env)
             env = NonDisappearEpLengthMetric(env)
         elif grid_config.on_target == 'finish':
+            env = ISRMetric(env)
+            env = CSRMetric(env)
+            env = EpLengthMetric(env)
+        else:
+            raise KeyError(f'Unknown on_target option: {grid_config.on_target}')
+
+    return env
             env = ISRMetric(env)
             env = CSRMetric(env)
             env = EpLengthMetric(env)

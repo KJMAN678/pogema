@@ -27,25 +27,33 @@ class RegisteredGrid:
         for idx, line in enumerate(grid_str.split()):
             row = []
             for char in line:
-                if char == '.':
+                if char == ".":
                     row.append(self.FREE)
-                elif char == '#':
+                elif char == "#":
                     row.append(self.OBSTACLE)
-                elif 'A' <= char <= 'Z':
+                elif "A" <= char <= "Z":
                     targets[char.lower()] = len(obstacles), len(row)
                     row.append(self.FREE)
-                elif 'a' <= char <= 'z':
+                elif "a" <= char <= "z":
                     agents[char.lower()] = len(obstacles), len(row)
                     row.append(self.FREE)
                 else:
                     raise KeyError(f"Unsupported symbol '{char}' at line {idx}")
             if row:
                 if obstacles:
-                    assert len(obstacles[-1]) == len(row), f"Wrong string size for row {idx};"
+                    assert len(obstacles[-1]) == len(
+                        row
+                    ), f"Wrong string size for row {idx};"
                 obstacles.append(row)
         return obstacles, agents, targets
 
-    def __init__(self, name: str, grid_str: str = None, agents_positions: list = None, agents_targets: list = None):
+    def __init__(
+        self,
+        name: str,
+        grid_str: str = None,
+        agents_positions: list = None,
+        agents_targets: list = None,
+    ):
         self.name = name
         self.grid_str = grid_str
         self.agents_positions = agents_positions
@@ -89,7 +97,11 @@ class RegisteredGrid:
         return self.targets_xy
 
     def render(self):
-        render_grid(obstacles=self.get_obstacles(), positions_xy=self.get_agents_xy(), targets_xy=self.get_targets_xy())
+        render_grid(
+            obstacles=self.get_obstacles(),
+            positions_xy=self.get_agents_xy(),
+            targets_xy=self.get_targets_xy(),
+        )
 
 
 def register_grid(rg: RegisteredGrid):

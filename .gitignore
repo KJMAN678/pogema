@@ -1,0 +1,6 @@
+COMMAND.md
+pogema/main.py
+docs/
+*.png
+.venv/
+__pycache__/
